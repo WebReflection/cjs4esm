@@ -7,7 +7,7 @@ const isPath = /^[./\\]/;
 
 const cjs = base => {
   require.cache = cache;
-  require.resolve = resolve.bind(null, base);
+  require.resolve = resolve.bind(null, (base || '.').replace(/\/+$/, ''));
   function require(module) {
     const path = require.resolve(module);
     if (!(path in cache)) {
@@ -71,8 +71,7 @@ try {
         path: xhr.responseURL
       };
     } catch(nope) {
-      // when this happens, it's most likely
-      // a canceled redirect
+      // when this happens, it's most likely a canceled redirect
       return {
         type: 'dir',
         path: path
@@ -103,27 +102,34 @@ try {
     } while((
       dir = dir.slice(0, dir.lastIndexOf(DIR_SEPARATOR))
     ));
+    return '';
   };
 
 } catch (notABrowser) {
 
   // Back End
 
+  const normalize = path => path.replace(/(^|\/)\.\//g, '$1')
+                                .replace(/([^/]+?)\/\.\.\//g, '');
+
+  const notFound = {type: '', path: ''};
+
   // common module loader
   loadAsModule = (dir, module) => {
-    let path = '';
+    const uid = normalize([dir, module].join(DIR_SEPARATOR));
+    if (uid in modules) return modules[uid];
     do {
-      const modules = [dir, 'node_modules'].join(DIR_SEPARATOR);
-      if (loadInfo(modules).type === 'dir') {
-        const info = loadInfo([modules, module].join(DIR_SEPARATOR));
+      const nodeModules = [dir, 'node_modules'].join(DIR_SEPARATOR);
+      if (loadInfo(nodeModules).type === 'dir') {
+        const info = loadInfo([nodeModules, module].join(DIR_SEPARATOR));
         if (info.type === 'dir') {
-          return loadAsDirectory(info.path);
+          return (modules[uid] = loadAsDirectory(info.path));
         } 
       }
     } while((
       dir = dir.slice(0, dir.lastIndexOf(DIR_SEPARATOR))
     ));
-    return path;
+    return '';
   };
 
   // SpiderMonkey
@@ -133,28 +139,26 @@ try {
     !!os.system
   ) {
 
-    const normalize = path => path.replace(/(^|\/)\.\//g, '$1')
-                                  .replace(/([^/]+?)\/\.\.\//g, '');
-
     loadContent = path => read(path);
     loadInfo = path => {
       path = normalize(path);
-      if (
-        // if it's a file or a folder, it's OK
-        os.system(`[ -f '${path}' ] || [ -d '${path}' ]`) === 0
-      ) {
+      // if it's a file or a folder, it's OK
+      if (os.system(`[ -f '${path}' ]`) === 0) {
         return {
           type: /\.js$/.test(path) ?
             'javascript' :
             (/\.json$/.test(path) ?
-              'json' : 'dir'),
+              'json' : ''),
+          path: path
+        };
+      }
+      else if (os.system(`[ -d '${path}' ]`) === 0) {
+        return {
+          type: 'dir',
           path: path
         };
       } else {
-        return {
-          type: '',
-          path: ''
-        };
+        return notFound;
       }
     };
   }
@@ -184,7 +188,7 @@ function loadAsDirectory(dir) {
   const info = loadInfo([dir, 'package.json'].join(DIR_SEPARATOR));
   if (info.type === 'json') {
     const pkg = JSON.parse(loadContent(info.path));
-    return pkg.main ? loadAsFile(dir, pkg.main) : loadIndex(dir);
+    if (pkg.main) return loadAsFile(dir, pkg.main);
   }
   return loadIndex(dir);
 }
