@@ -1,3 +1,5 @@
+/*! (c) Andrea Giammarchi, ISC License */
+
 const DIR_SEPARATOR = '/';
 const cache = Object.create(null);
 const modules = Object.create(null);

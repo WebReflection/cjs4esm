@@ -3,10 +3,13 @@
   "version": "0.0.0",
   "description": "CommonJS `require` via ESM import for Front End and Back End.",
   "main": "c.js",
+  "module": "c.js",
+  "browser": "min.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
+    "min": "uglifyjs --comments=/^!/ c.js -cmo min.js",
     "test-js52": "cd test && js52 --module module.js"
   },
   "repository": {
@@ -25,6 +28,7 @@
   },
   "homepage": "https://github.com/WebReflection/cjs4esm#readme",
   "devDependencies": {
-    "circular-json": "^0.5.1"
+    "circular-json": "^0.5.1",
+    "uglify-es": "^3.2.2"
   }
 }

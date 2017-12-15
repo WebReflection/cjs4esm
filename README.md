@@ -30,8 +30,10 @@ You can test the demo via `npm run test-js52` as long as you have SpiderMonkey i
 
 If you are using this with **browsers**, it is strongly suggested you do that **only during development** because the CommonJS resolution procedure is everything but HTTP friendly so performance, and useless network requests, might happen.
 
+You can, however, test this module on your browser through the [test page](https://webreflection.github.io/cjs4esm/test/).
 
-### ... but why ...
+
+### Goal / Use case
 
 The goal of this project is to help migrating to fully standard ESM, no matter which target you are using.
 
