@@ -1,5 +1,5 @@
 import cjs from '../c.js';
-const require = cjs('.');
+const require = cjs(location.pathname.slice(0, -1));
 
 // resolves ./demo/index.js
 const demo = require('./demo');

@@ -10,7 +10,7 @@
   },
   "scripts": {
     "min": "uglifyjs --comments=/^!/ c.js -cmo min.js",
-    "test-js52": "cd test && js52 --module module.js"
+    "test-js52": "js52 --module-load-path=\"$(pwd)\" --module test/js52.js"
   },
   "repository": {
     "type": "git",
