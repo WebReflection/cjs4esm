@@ -71,9 +71,11 @@ try {
         path: xhr.responseURL
       };
     } catch(nope) {
+      // when this happens, it's most likely
+      // a canceled redirect
       return {
-        type: '',
-        path: ''
+        type: 'dir',
+        path: path
       };
     }
   };
