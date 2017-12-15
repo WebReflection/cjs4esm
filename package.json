@@ -1,0 +1,30 @@
+{
+  "name": "cjs4esm",
+  "version": "0.0.0",
+  "description": "CommonJS `require` via ESM import for Front End and Back End.",
+  "main": "c.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test-js52": "cd test && js52 --module module.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WebReflection/cjs4esm.git"
+  },
+  "keywords": [
+    "require",
+    "ESM",
+    "CJS"
+  ],
+  "author": "Andrea Giammarchi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WebReflection/cjs4esm/issues"
+  },
+  "homepage": "https://github.com/WebReflection/cjs4esm#readme",
+  "devDependencies": {
+    "circular-json": "^0.5.1"
+  }
+}

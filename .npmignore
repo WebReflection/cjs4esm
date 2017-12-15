@@ -1,0 +1,8 @@
+node_modules/*
+test/*
+_config.yml
+.DS_Store
+.eslintrc
+.gitignore
+.travis.yml
+package-lock.json
