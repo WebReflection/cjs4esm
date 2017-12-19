@@ -162,7 +162,18 @@ try {
       }
     };
   }
-  // JSC, Nexusjs, and NodeJS coming soon
+  // JSC
+  else if (
+    typeof readFile === 'function'
+  ) {
+    loadContent = path => readFile(path);
+    loadInfo = path => {
+      path = normalize(path);
+      // THERE IS NO WAY TO USE FILESYSTEM
+      return notFound;
+    };
+  }
+  // Nexusjs, and NodeJS coming soon
   else {
     throw new Error('Incompatible Platform');
   }
