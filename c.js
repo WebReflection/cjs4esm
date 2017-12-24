@@ -136,7 +136,7 @@ try {
   if (
     typeof read === 'function' &&
     typeof os === 'object' &&
-    !!os.system
+    os.system
   ) {
 
     loadContent = path => read(path);
@@ -144,13 +144,7 @@ try {
       path = normalize(path);
       // if it's a file or a folder, it's OK
       if (os.system(`[ -f '${path}' ]`) === 0) {
-        return {
-          type: /\.js$/.test(path) ?
-            'javascript' :
-            (/\.json$/.test(path) ?
-              'json' : ''),
-          path: path
-        };
+        return asFile(path);
       }
       else if (os.system(`[ -d '${path}' ]`) === 0) {
         return {
@@ -169,14 +163,72 @@ try {
     loadContent = path => readFile(path);
     loadInfo = path => {
       path = normalize(path);
-      // THERE IS NO WAY TO USE FILESYSTEM
-      return notFound;
+      // there is no way to know if a path
+      // is a directory in JSC
+      // this method tries to figure out
+      // lazily if expected files exists instead.
+      // node_modules would always return dir
+      if (/[\\/]node_modules$/.test(path)) {
+        return {
+          type: 'dir',
+          path: path
+        };
+      }
+      // common files are searched for real.
+      // JSC does not crash if the file does not exist
+      // so this operation is "safe" to be performed
+      // (a folder called index.js or package.json will crash though ... just don't)
+      else if (/[\\/](?:package\.json|index\.js|index\.json)$/.test(path)) {
+        try {
+          readFile(path);
+          return asFile(path);
+        } catch(e) {
+          return notFound;
+        }
+      }
+      // as last file attempt, try adding .js at the end
+      else if (!/\.(?:js|json)$/.test(path)) {
+        try {
+          readFile(`${path}.js`);
+          return asFile(`${path}.js`);
+        } catch(nope) {
+          try {
+            readFile(`${path}.json`);
+            return asFile(`${path}.json`);
+          } catch(nope) {
+            // keep trying with folders
+          }
+        }
+      } else {
+        try {
+          readFile(path);
+          return asFile(path);
+        } catch(nope) {
+          // keep trying with folders
+        }
+      }
+      // in all other cases, return the content of the folder
+      // plus common file to be sure it's a real folder
+      let info = loadInfo([path, 'package.json'].join(DIR_SEPARATOR));
+      if (info === notFound) info = loadInfo([path, 'index.js'].join(DIR_SEPARATOR));
+      if (info === notFound) info = loadInfo([path, 'index.json'].join(DIR_SEPARATOR));
+      return info === notFound ? info : { type: 'dir', path: path };
     };
   }
   // Nexusjs, and NodeJS coming soon
   else {
     throw new Error('Incompatible Platform');
   }
+}
+
+function asFile(path) {
+  return {
+    path,
+    type: /\.js$/.test(path) ?
+            'javascript' :
+            (/\.json$/.test(path) ?
+              'json' : '')
+  };
 }
 
 function loadAsFile(dir, file) {
@@ -188,7 +240,7 @@ function loadAsFile(dir, file) {
       return 0 < info.type.length;
     }
   )) {
-    return /^javascript|json$/.test(info.type) && /\.(?:js|json)$/.test(name) ?
+    return /^javascript|json$/.test(info.type) && /\.(?:js|json)$/.test(info.path) ?
       info.path :
       loadAsDirectory([dir, file].join(DIR_SEPARATOR));
   }

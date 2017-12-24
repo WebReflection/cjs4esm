@@ -1,7 +1,6 @@
 import cjs from '../c.js';
-const require = cjs(`.`);
+const require = cjs(`./test`);
 
-// resolves ./demo/index.js
 const demo = require('./demo');
-console.log(demo.rand);
-console.log(demo.CircularJSON.stringify);
+print(demo.rand);
+print(demo.CircularJSON.stringify);

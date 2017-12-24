@@ -13,7 +13,7 @@
     "min": "uglifyjs --comments=/^!/ c.js -cmo min.js",
     "test": "npm run test-js52",
     "test-js52": "js52 --module-load-path=\"$(pwd)\" --module test/js52.js",
-    "test-jsc": "jsc -m test/jsc.js"
+    "test-jsc": "jsc -m test/jsc.js 2> /dev/null"
   },
   "repository": {
     "type": "git",
