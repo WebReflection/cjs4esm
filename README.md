@@ -23,8 +23,8 @@ require.resolve('./demo'); // i.e. ./demo/index.js
 
 ### Compatibility
 
-While it is planned to make this module work on [JSC](https://trac.webkit.org/wiki/JavaScriptCore), [NexusJS](https://github.com/voodooattack/nexusjs), and [NodeJS](https://nodejs.org/en/) too,
-you can use it already today in **SpiderMonkey**.
+While it is planned to make this module work on [NexusJS](https://github.com/voodooattack/nexusjs), and [NodeJS](https://nodejs.org/en/) too,
+you can use it already today in **SpiderMonkey** and **[JSC](https://trac.webkit.org/wiki/JavaScriptCore)** or eventually **browser** too.
 
 You can test the demo via `npm run test-js52` as long as you have SpiderMonkey installed as `js52` executable.
 
