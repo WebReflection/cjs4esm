@@ -1,6 +1,6 @@
 {
   "name": "cjs4esm",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "CommonJS `require` via ESM import for Front End and Back End.",
   "main": "c.js",
   "module": "c.js",
