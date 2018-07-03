@@ -4,7 +4,7 @@
   "description": "CommonJS `require` via ESM import for Front End and Back End.",
   "main": "c.js",
   "module": "c.js",
-  "browser": "min.js",
+  "unpkg": "min.js",
   "directories": {
     "test": "test"
   },
